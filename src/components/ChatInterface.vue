@@ -1,38 +1,24 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch, nextTick } from "vue";
 import { Heart, User, Bot, Send, Mic } from "lucide-vue-next";
-import { send } from "vite";
+import { fetchAIResponse } from "../services/DeepseekService";
 
 interface Message {
-  id: String,
-  content: String,
-  sender: String,
-  timestamp: Date,
+  id: string;
+  content: string;
+  sender: string;
+  timestamp: Date;
+  emotion?: string;
 }
 
-const messages = ref([]);
+const messages = ref<Message[]>([]);
 const inputMessage = ref("");
 const isTyping = ref(false);
-const messagesEndRef = ref(null);
+const messagesEndRef = ref<HTMLElement | null>(null);
 const currentAIName = ref("AI Companion");
 
-const formatTime = (date:Date) :string => {
+const formatTime = (date: Date): string => {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-};
-
-const fetchAIResponse = async (userInput:string):Promise<string> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const responses = [
-    `你好！我是AI助手，很高兴为您服务。您说"${userInput}"是什么意思呢？`,
-    `我理解您说的是"${userInput}"，这是一个有趣的话题。您想了解更多相关信息吗？`,
-    `感谢您的提问："${userInput}"。我可以为您提供详细的解释和相关信息。`,
-    `您提到的"${userInput}"让我想到一些相关的概念。让我详细解释一下...`,
-    `关于"${userInput}"，我可以从几个角度为您分析：首先...其次...最后...`,
-    `我检测到您对"${userInput}"感兴趣。需要我提供更深入的技术细节吗？`,
-    `您的问题"${userInput}"很有深度。让我整理一下思路，给您一个全面的回答。`,
-  ];
-
-  return responses[Math.floor(Math.random() * responses.length)];
 };
 
 const scrollToBottom = () => {
@@ -75,7 +61,7 @@ const handleSendMessage = async () => {
 onMounted(() => {
   const initialMessage = {
     id: (Date.now() + 1).toString(),
-    content: "Hi, I'm ChatGPT. How can I help you?",
+    content: "Hi, I'm Deepseek. How can I help you?",
     sender: "ai",
     timestamp: new Date(),
     emotion: "caring",
@@ -97,7 +83,6 @@ watch(
     class="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-12 px-4"
   >
     <div class="max-w-7xl mx-auto">
-
       <div class="max-w-6xl mx-auto">
         <div
           class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mb-12"

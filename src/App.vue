@@ -1,9 +1,10 @@
 <script setup lang="ts">
-// App entry point
+import Navigation from "./components/Navigation.vue";
 </script>
 
 <template>
-  <router-view />
+  <Navigation />
+  <router-view class="pt-16" />
 </template>
 
 <style>

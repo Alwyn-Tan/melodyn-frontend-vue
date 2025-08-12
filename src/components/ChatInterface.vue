@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, nextTick } from "vue";
-import { Heart, User, Bot, Send, Mic } from "lucide-vue-next";
-import { fetchAIResponse } from "../services/DeepseekService";
+import {ref, onMounted, watch, nextTick} from "vue";
+import {Heart, User, Bot, Send, Mic} from "lucide-vue-next";
+import {fetchAIResponse} from "../services/DeepseekService";
 
 interface Message {
   id: string;
@@ -18,13 +18,13 @@ const messagesEndRef = ref<HTMLElement | null>(null);
 const currentAIName = ref("AI Companion");
 
 const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
 };
 
 const scrollToBottom = () => {
   nextTick(() => {
     if (messagesEndRef.value) {
-      messagesEndRef.value.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.value.scrollIntoView({behavior: "smooth"});
     }
   });
 };
@@ -70,34 +70,34 @@ onMounted(() => {
 });
 
 watch(
-  messages,
-  () => {
-    scrollToBottom();
-  },
-  { deep: true }
+    messages,
+    () => {
+      scrollToBottom();
+    },
+    {deep: true}
 );
 </script>
 
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-12 px-4"
+      class="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 py-12 px-4"
   >
     <div class="max-w-7xl mx-auto">
       <div class="max-w-6xl mx-auto">
         <div
-          class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mb-12"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mb-12"
         >
           <!-- 聊天界面组件 -->
           <div
-            class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl h-96 flex flex-col"
+              class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl h-96 flex flex-col"
           >
             <!-- Chat Header -->
             <div class="p-4 border-b border-white/20">
               <div class="flex items-center space-x-3">
                 <div
-                  class="w-10 h-10 bg-gradient-to-br from-pink-500/30 to-gray-500/30 rounded-full flex items-center justify-center"
+                    class="w-10 h-10 bg-gradient-to-br from-pink-500/30 to-gray-500/30 rounded-full flex items-center justify-center"
                 >
-                  <Heart class="w-5 h-5 text-pink-600" />
+                  <Heart class="w-5 h-5 text-pink-600"/>
                 </div>
                 <div>
                   <h3 class="font-semibold text-gray-800">
@@ -109,7 +109,7 @@ watch(
                 </div>
                 <div class="ml-auto">
                   <div
-                    class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                      class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
                   ></div>
                 </div>
               </div>
@@ -118,15 +118,15 @@ watch(
             <!-- Messages Area -->
             <div class="flex-1 overflow-y-auto p-4 space-y-4">
               <div
-                v-for="message in messages"
-                :key="message.id"
-                :class="[
+                  v-for="message in messages"
+                  :key="message.id"
+                  :class="[
                   'flex',
                   message.sender === 'user' ? 'justify-end' : 'justify-start',
                 ]"
               >
                 <div
-                  :class="[
+                    :class="[
                     'flex items-start space-x-2 max-w-xs',
                     message.sender === 'user'
                       ? 'flex-row-reverse space-x-reverse'
@@ -134,7 +134,7 @@ watch(
                   ]"
                 >
                   <div
-                    :class="[
+                      :class="[
                       'w-8 h-8 rounded-full flex items-center justify-center',
                       message.sender === 'user'
                         ? 'bg-gradient-to-br from-gray-500/20 to-gray-400/20'
@@ -142,13 +142,13 @@ watch(
                     ]"
                   >
                     <User
-                      v-if="message.sender === 'user'"
-                      class="w-4 h-4 text-gray-600"
+                        v-if="message.sender === 'user'"
+                        class="w-4 h-4 text-gray-600"
                     />
-                    <Bot v-else class="w-4 h-4 text-pink-600" />
+                    <Bot v-else class="w-4 h-4 text-pink-600"/>
                   </div>
                   <div
-                    :class="[
+                      :class="[
                       'rounded-2xl px-4 py-2',
                       message.sender === 'user'
                         ? 'bg-gradient-to-r from-gray-500/20 to-gray-400/20 text-gray-800'
@@ -165,24 +165,24 @@ watch(
               <div v-if="isTyping" class="flex justify-start">
                 <div class="flex items-start space-x-2">
                   <div
-                    class="w-8 h-8 bg-gradient-to-br from-pink-500/20 to-pink-400/20 rounded-full flex items-center justify-center"
+                      class="w-8 h-8 bg-gradient-to-br from-pink-500/20 to-pink-400/20 rounded-full flex items-center justify-center"
                   >
-                    <Bot class="w-4 h-4 text-pink-600" />
+                    <Bot class="w-4 h-4 text-pink-600"/>
                   </div>
                   <div
-                    class="bg-gradient-to-r from-pink-500/20 to-pink-400/20 rounded-2xl px-4 py-2"
+                      class="bg-gradient-to-r from-pink-500/20 to-pink-400/20 rounded-2xl px-4 py-2"
                   >
                     <div class="flex space-x-1">
                       <div
-                        class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
+                          class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
                       ></div>
                       <div
-                        class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
-                        style="animation-delay: 0.1s"
+                          class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
+                          style="animation-delay: 0.1s"
                       ></div>
                       <div
-                        class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
-                        style="animation-delay: 0.2s"
+                          class="w-2 h-2 bg-pink-600 rounded-full animate-bounce"
+                          style="animation-delay: 0.2s"
                       ></div>
                     </div>
                   </div>
@@ -196,29 +196,29 @@ watch(
               <div class="flex items-center space-x-2">
                 <div class="flex-1 relative">
                   <textarea
-                    v-model="inputMessage"
-                    @keydown.enter.exact.prevent="handleSendMessage"
-                    placeholder="Share your thoughts with your AI companion"
-                    class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm text-gray-800 placeholder-gray-500 resize-none focus:outline-none focus:border-pink-500/50 transition-colors"
-                    rows="1"
+                      v-model="inputMessage"
+                      @keydown.enter.exact.prevent="handleSendMessage"
+                      placeholder="Share your thoughts with your AI companion"
+                      class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm text-gray-800 placeholder-gray-500 resize-none focus:outline-none focus:border-pink-500/50 transition-colors"
+                      rows="1"
                   ></textarea>
                 </div>
                 <button
-                  @click="handleSendMessage"
-                  :disabled="!inputMessage.trim()"
-                  :class="[
-                    'w-10 h-10 bg-gradient-to-r from-pink-500/20 to-gray-500/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center transition-all duration-300',
+                    @click="handleSendMessage"
+                    :disabled="!inputMessage.trim()"
+                    :class="[
+                    'bg-gradient-to-r from-pink-500/20 to-gray-500/20 backdrop-blur-sm border border-white/30 flex items-center justify-center',
                     inputMessage.trim()
                       ? 'hover:from-pink-500/30 hover:to-gray-500/30 hover:border-white/50'
                       : 'opacity-50 cursor-not-allowed',
                   ]"
                 >
-                  <Send class="w-4 h-4 text-pink-600" />
+                  <Send class=" h-4 text-pink-600"/>
                 </button>
                 <button
-                  class="w-10 h-10 bg-gradient-to-r from-pink-500/20 to-gray-500/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center hover:from-pink-500/30 hover:to-gray-500/30 hover:border-white/50 transition-all duration-300"
+                    class="bg-gradient-to-r from-pink-500/20 to-gray-500/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center hover:from-pink-500/30 hover:to-gray-500/30 hover:border-white/50 transition-all duration-300"
                 >
-                  <Mic class="w-4 h-4 text-pink-600" />
+                  <Mic class="h-4 text-pink-600"/>
                 </button>
               </div>
             </div>
@@ -287,6 +287,7 @@ body {
 .message-leave-active {
   transition: all 0.3s ease;
 }
+
 .message-enter-from,
 .message-leave-to {
   opacity: 0;

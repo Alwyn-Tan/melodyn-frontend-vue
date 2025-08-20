@@ -7,9 +7,11 @@ const isOpen = ref(false);
 
 interface UserMenuProps {
   user: UserType | null;
+  isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
   onLoginWithWallet: () => void;
+  onLogout: () => void;
 }
 
 const props = defineProps<UserMenuProps>();

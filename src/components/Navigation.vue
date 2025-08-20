@@ -2,6 +2,7 @@
 import {Zap, Star, Waves, Sparkles} from "lucide-vue-next";
 import {useRouter} from "vue-router";
 import UserMenu from "./UserMenu.vue"
+import {useAuth} from "../composables/useAuth.ts";
 
 defineOptions({
   name: "Navigation",
@@ -18,6 +19,8 @@ const navItems = [
 const navigate = (routeName: string) => {
   router.push({name: routeName});
 };
+
+const {user, isAuthenticated, isLoading, error, loginWithWallet, logout} = useAuth();
 </script>
 
 <template>
@@ -53,7 +56,13 @@ const navigate = (routeName: string) => {
         </div>
 
         <div class="absolute right-0">
-          <UserMenu/>
+          <UserMenu
+              :user="user"
+              :is-authenticated="isAuthenticated"
+              :is-loading="isLoading"
+              :error="error"
+              :on-login-with-wallet="loginWithWallet"
+              :on-logout="logout"/>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {ethers} from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
@@ -64,6 +64,38 @@ export function useWallet() {
             chainId: null,
         }
     }
+
+    const checkConnection = async () => {
+        try {
+            const provider = await detectEthereumProvider();
+            if (provider) {
+                const ethersProvider = new ethers.BrowserProvider(provider as any);
+                const accounts = await ethersProvider.listAccounts();
+
+                if (accounts.length > 0) {
+                    const signer = await ethersProvider.getSigner();
+                    const address = await signer.getAddress();
+                    const network = await ethersProvider.getNetwork();
+
+                    wallet.value = {
+                        isConnected: true,
+                        address,
+                        provider: ethersProvider,
+                        signer,
+                        chainId: Number(network.chainId),
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Failed to check wallet connection', err);
+        }
+    };
+
+    onMounted(
+        () => {
+            checkConnection();
+        }
+    );
 
     return {
         wallet,

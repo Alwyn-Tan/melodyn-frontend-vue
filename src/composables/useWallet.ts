@@ -22,6 +22,20 @@ export function useWallet() {
     const isConnecting = ref(false);
     const error = ref<string | null>(null);
 
+    const updateWalletState = async (ethersProvider: ethers.BrowserProvider) => {
+        const signer = await ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        const network = await ethersProvider.getNetwork();
+
+        wallet.value = {
+            isConnected: true,
+            address,
+            provider: ethersProvider,
+            signer,
+            chainId: Number(network.chainId),
+        };
+    };
+
     const connectWallet = async () => {
         try {
             isConnecting.value = true;
@@ -37,17 +51,8 @@ export function useWallet() {
                 throw new Error('No accounts found. Please connect your wallet.')
             }
 
-            const signer = await ethersProvider.getSigner();
-            const address = await signer.getAddress();
-            const network = await ethersProvider.getNetwork();
+            await updateWalletState(ethersProvider);
 
-            wallet.value = {
-                isConnected: true,
-                address,
-                provider: ethersProvider,
-                signer,
-                chainId: Number(network.chainId),
-            }
         } catch (err: any) {
             error.value = err.message || 'Failed to connect wallet';
         } finally {
@@ -68,23 +73,15 @@ export function useWallet() {
     const checkConnection = async () => {
         try {
             const provider = await detectEthereumProvider();
-            if (provider) {
-                const ethersProvider = new ethers.BrowserProvider(provider as any);
-                const accounts = await ethersProvider.listAccounts();
+            if (!provider) {
+                return;
+            }
 
-                if (accounts.length > 0) {
-                    const signer = await ethersProvider.getSigner();
-                    const address = await signer.getAddress();
-                    const network = await ethersProvider.getNetwork();
+            const ethersProvider = new ethers.BrowserProvider(provider as any);
+            const accounts = await ethersProvider.listAccounts();
 
-                    wallet.value = {
-                        isConnected: true,
-                        address,
-                        provider: ethersProvider,
-                        signer,
-                        chainId: Number(network.chainId),
-                    }
-                }
+            if (accounts.length > 0) {
+                await updateWalletState(ethersProvider);
             }
         } catch (err) {
             console.error('Failed to check wallet connection', err);

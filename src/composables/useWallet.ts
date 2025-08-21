@@ -1,4 +1,4 @@
-import {reactive, ref, toValue} from 'vue';
+import {ref} from 'vue';
 import {ethers} from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
@@ -11,7 +11,7 @@ interface WalletState {
 }
 
 export function useWallet() {
-    const wallet = reactive<WalletState>({
+    const wallet = ref<WalletState>({
         isConnected: false,
         address: null,
         provider: null,
@@ -41,11 +41,13 @@ export function useWallet() {
             const address = await signer.getAddress();
             const network = await ethersProvider.getNetwork();
 
-            wallet.isConnected = true;
-            wallet.address = address;
-            wallet.provider = ethersProvider;
-            wallet.signer = signer;
-            wallet.chainId = Number(network.chainId);
+            wallet.value = {
+                isConnected: true,
+                address,
+                provider: ethersProvider,
+                signer,
+                chainId: Number(network.chainId),
+            }
         } catch (err: any) {
             error.value = err.message || 'Failed to connect wallet';
         } finally {
@@ -54,18 +56,20 @@ export function useWallet() {
     }
 
     const disconnectWallet = () => {
-        wallet.isConnected = false;
-        wallet.address = null;
-        wallet.provider = null;
-        wallet.signer = null;
-        wallet.chainId = null;
+        wallet.value = {
+            isConnected: false,
+            address: null,
+            provider: null,
+            signer: null,
+            chainId: null,
+        }
     }
 
     return {
         wallet,
         connectWallet,
         disconnectWallet,
-        isConnecting: toValue(isConnecting),
-        error: toValue(error),
+        isConnecting,
+        error,
     }
 }

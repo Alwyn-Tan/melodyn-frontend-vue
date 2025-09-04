@@ -1,4 +1,4 @@
-import {ref, watch, onMounted} from 'vue';
+import {ref, watch, onMounted, reactive, toRefs} from 'vue';
 import {useWallet} from "./useWallet.ts";
 
 export interface UserType {
@@ -20,7 +20,7 @@ interface AuthState {
 export function useAuth() {
     const {wallet, connectWallet, disconnectWallet, isConnecting, error: walletError} = useWallet();
 
-    const authState = ref<AuthState>({
+    const authState = reactive<AuthState>({
         user: null,
         isAuthenticated: false,
         isLoading: false,
@@ -28,23 +28,22 @@ export function useAuth() {
 
     const loginWithWallet = async (): Promise<void> => {
         try {
-            authState.value = {...authState.value, isLoading: true};
+            authState.isLoading = true;
             await connectWallet();
         } catch (error) {
             console.error('Error during wallet login:', error);
-            authState.value = {...authState.value, isLoading: false};
+            authState.isLoading = false;
         }
     }
 
     const logout = (): void => {
         disconnectWallet();
-        authState.value = {
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-        }
+        authState.user = null;
+        authState.isAuthenticated = false;
+        authState.isLoading = false;
         localStorage.removeItem('user')
     }
+
     const createNewUser = (walletAddress: string): UserType => ({
         id: walletAddress,
         name: `User ${walletAddress
@@ -76,21 +75,18 @@ export function useAuth() {
                 }
             } else {
                 user = createNewUser(wallet.value.address);
+                console.log('New user created:', user.name);
             }
 
-            authState.value = {
-                user,
-                isAuthenticated: true,
-                isLoading: false,
-            };
-
+            authState.user = user;
+            authState.isAuthenticated = true;
+            authState.isLoading = false;
+            console.log('Authentication status changed during watch:', authState.isAuthenticated)
             localStorage.setItem('user', JSON.stringify(user));
         } else {
-            authState.value = {
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-            };
+            authState.user = null;
+            authState.isAuthenticated = false;
+            authState.isLoading = false;
             localStorage.removeItem('user');
         }
     });
@@ -100,11 +96,9 @@ export function useAuth() {
         if (savedUser && wallet.value.isConnected) {
             try {
                 const user = JSON.parse(savedUser);
-                authState.value = {
-                    user,
-                    isAuthenticated: true,
-                    isLoading: false,
-                };
+                authState.user = user;
+                authState.isAuthenticated = true;
+                authState.isLoading = false;
             } catch (error) {
                 console.error('Error parsing user from local storage:', error);
                 localStorage.removeItem('user')
@@ -113,14 +107,13 @@ export function useAuth() {
     });
 
     return {
-        ...authState.value,
+        ...toRefs(authState),
         get isLoading() {
-            return authState.value.isLoading || isConnecting.value;
+            return authState.isLoading || isConnecting.value;
         },
         error: walletError,
         loginWithWallet,
         logout,
         wallet: wallet.value,
     }
-};
-
+}

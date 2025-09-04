@@ -3,6 +3,7 @@ import {Zap, Star, Waves, Sparkles} from "lucide-vue-next";
 import {useRoute, useRouter} from "vue-router";
 import UserMenu from "./UserMenu.vue";
 import {useAuth} from "../composables/useAuth";
+import {watch} from "vue";
 
 defineOptions({
   name: "Navigation",
@@ -21,8 +22,16 @@ const navigate = (routeName: string) => {
   router.push({name: routeName});
 };
 
-const {user, isAuthenticated, isLoading, error, loginWithWallet, logout} =
-    useAuth();
+const {
+  user,
+  isAuthenticated,
+  isLoading,
+  error,
+  loginWithWallet,
+  logout,
+  wallet,
+} = useAuth();
+
 </script>
 
 <template>
@@ -49,15 +58,16 @@ const {user, isAuthenticated, isLoading, error, loginWithWallet, logout} =
           <template v-for="item in navItems" :key="item.id">
             <button
                 @click="navigate(item.id)"
-                :class="
-                ['px-3 py-2 w-40 rounded-full text-sm font-medium transition-all duration-300 flex flex-col items-center space-y-1',
+                :class="[
+                'px-3 py-2 w-40 rounded-full text-sm font-medium transition-all duration-300 flex flex-col items-center space-y-1',
                 route.name === item.id
-                ?'bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 text-purple-700 shadow-lg shadow-purple-500/20'
-                :'text-gray-700 hover:bg-gradient-to-r hover:from-purple-500/10 hover:via-pink-500/10 hover:to-orange-500/10 hover:text-purple-600']">
+                  ? 'bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 text-purple-700 shadow-lg shadow-purple-500/20'
+                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-500/10 hover:via-pink-500/10 hover:to-orange-500/10 hover:text-purple-600',
+              ]"
+            >
               <component :is="item.icon" class="w-5 h-5"/>
               <span class="text-xs">{{ item.label }}</span>
             </button>
-
           </template>
         </div>
 

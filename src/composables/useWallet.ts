@@ -52,7 +52,7 @@ export function useWallet() {
             }
 
             await updateWalletState(ethersProvider);
-
+            console.log('Wallet connected:', wallet.value.isConnected);
         } catch (err: any) {
             error.value = err.message || 'Failed to connect wallet';
         } finally {
